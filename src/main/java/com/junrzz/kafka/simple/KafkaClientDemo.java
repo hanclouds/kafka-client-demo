@@ -1,4 +1,4 @@
-package com.liujj.kafka;
+package com.junrzz.kafka.simple;
 
 import org.apache.kafka.clients.CommonClientConfigs;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
@@ -24,7 +24,7 @@ public class KafkaClientDemo {
     public static void main(String[] args){
         Properties props = new Properties();
 
-        java.security.Security.setProperty("login.configuration.provider", "com.liujj.kafka.SaslConfig");
+        java.security.Security.setProperty("login.configuration.provider", "SaslConfig");
         props.put("bootstrap.servers", "192.168.1.100:9092");
         props.put("acks", "all");
         props.put("retries", 0);

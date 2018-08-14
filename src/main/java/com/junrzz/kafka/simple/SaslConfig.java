@@ -1,4 +1,4 @@
-package com.liujj.kafka;
+package com.junrzz.kafka.simple;
 
 import javax.security.auth.login.AppConfigurationEntry;
 import javax.security.auth.login.Configuration;
