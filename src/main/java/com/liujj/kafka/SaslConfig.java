@@ -14,8 +14,8 @@ import java.util.Map;
 public class SaslConfig extends Configuration {
     @Override
     public AppConfigurationEntry[] getAppConfigurationEntry(String name) {
-        String appKey = "WL4odQnH";
-        String secretKey = "mCVmZAka-fS4EKMWTYKS1zZ84";
+        String appKey = "WL4odQnH";    //登陆认证用户名
+        String secretKey = "mCVmZAka-fS4EKMWTYKS1zZ84"; //登陆认证密码
         Map<String, String> options = new HashMap<String, String>();
         options.put("username", appKey);
         options.put("password", secretKey);

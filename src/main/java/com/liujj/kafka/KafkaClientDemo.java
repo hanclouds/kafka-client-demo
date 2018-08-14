@@ -4,11 +4,9 @@ import org.apache.kafka.clients.CommonClientConfigs;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
-import org.apache.kafka.clients.producer.KafkaProducer;
-import org.apache.kafka.clients.producer.Producer;
-import org.apache.kafka.clients.producer.ProducerRecord;
 
 import javax.security.auth.login.Configuration;
+import java.time.Duration;
 import java.util.Arrays;
 import java.util.Properties;
 
@@ -18,7 +16,7 @@ import java.util.Properties;
  * @author: liujj
  * @create: 2018-08-14 14:21
  **/
-public class ProducerDemo {
+public class KafkaClientDemo {
     /**
      * 使用producer 注释掉consumer部分的代码及 group.id，key.deserializer，value.deserializer 属性
      * @param args
@@ -41,7 +39,6 @@ public class ProducerDemo {
         props.put(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, "SASL_PLAINTEXT");
         props.put("sasl.mechanism", "PLAIN");
         Configuration.setConfiguration(new SaslConfig());
-        // 使用producer 注释掉consumer部分的代码及 group.id 属性
 //        Producer<String, String> producer = new KafkaProducer<>(props);
 //        for (int i = 0; i < 100; i++){
 //            producer.send(new ProducerRecord<String, String>("test", Integer.toString(i), Integer.toString(i)));
@@ -50,7 +47,7 @@ public class ProducerDemo {
         KafkaConsumer<String, String> consumer = new KafkaConsumer<>(props);
         consumer.subscribe(Arrays.asList("test"));
         while (true) {
-            ConsumerRecords<String, String> records = consumer.poll(100);
+            ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(1000));
             for (ConsumerRecord<String, String> record : records){
                 System.out.printf("offset = %d, key = %s, value = %s%n", record.offset(), record.key(), record.value());
             }
