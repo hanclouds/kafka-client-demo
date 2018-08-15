@@ -23,8 +23,6 @@ public class KafkaClientDemo {
      */
     public static void main(String[] args){
         Properties props = new Properties();
-
-        java.security.Security.setProperty("login.configuration.provider", "SaslConfig");
         props.put("bootstrap.servers", "192.168.1.100:9092");
         props.put("acks", "all");
         props.put("retries", 0);
