@@ -19,9 +19,10 @@ import java.util.Properties;
 public class KafkaClientDemo {
     /**
      * 使用producer 注释掉consumer部分的代码及 group.id，key.deserializer，value.deserializer 属性
+     *
      * @param args
      */
-    public static void main(String[] args){
+    public static void main(String[] args) {
         Properties props = new Properties();
         props.put("bootstrap.servers", "192.168.1.100:9092");
         props.put("acks", "all");
@@ -46,7 +47,7 @@ public class KafkaClientDemo {
         consumer.subscribe(Arrays.asList("test"));
         while (true) {
             ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(1000));
-            for (ConsumerRecord<String, String> record : records){
+            for (ConsumerRecord<String, String> record : records) {
                 System.out.printf("offset = %d, key = %s, value = %s%n", record.offset(), record.key(), record.value());
             }
 
