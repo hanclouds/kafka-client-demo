@@ -43,7 +43,7 @@ public class KafkaClientDemo {
         props.put("batch.size", 16384);
         props.put("linger.ms", 1);
         props.put("buffer.memory", 33554432);
-        props.put("client.id", "123");
+        props.put("client.id", USER_NAME+"-test-1");
 //        props.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer");
 //        props.put("value.serializer", "org.apache.kafka.common.serialization.StringSerializer");
         props.put("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
