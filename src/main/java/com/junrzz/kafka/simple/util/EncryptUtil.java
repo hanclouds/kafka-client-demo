@@ -2,6 +2,7 @@ package com.junrzz.kafka.simple.util;
 
 import com.hanclouds.util.CryptoUtils;
 
+import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
@@ -19,7 +20,7 @@ public class EncryptUtil {
     */
 
     public static String encryptPassword(String productKey,String queryKey,String querySecret){
-       final int randomNumber = ThreadLocalRandom.current().nextInt(999);
+       final String randomNumber =  UUID.randomUUID().toString().replaceAll("-", "");
        long timestamp = System.currentTimeMillis();
         String content = productKey + "-" + queryKey + "-" + randomNumber + "-"+ timestamp;
         String tempSignature = CryptoUtils.signWithHmacsh1(querySecret, content);
