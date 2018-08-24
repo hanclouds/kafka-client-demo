@@ -13,20 +13,22 @@ import java.util.concurrent.ThreadLocalRandom;
  **/
 public class EncryptUtil {
     /**
-    * @Description:
-    * @Param: [productKey, queryKey, querySecret]
-    * @return: java.lang.String
-    * @Date: 2018/8/23
-    */
+     * @Description:
+     * @Param: [productKey, queryKey, querySecret]
+     * @return: java.lang.String
+     * @Date: 2018/8/23
+     */
 
-    public static String encryptPassword(String productKey,String queryKey,String querySecret){
-       final String randomNumber =  UUID.randomUUID().toString().replaceAll("-", "");
-       long timestamp = System.currentTimeMillis();
-        String content = productKey + "-" + queryKey + "-" + randomNumber + "-"+ timestamp;
+    public static String encryptPassword(String productKey, String queryKey, String querySecret) {
+        final String bar = "\u002d";
+        final String nonce = UUID.randomUUID().toString().replaceAll(bar, "");
+        long timestamp = System.currentTimeMillis();
+        String content = String.format("%s%s%s%s%s%s%s", productKey, bar, queryKey, bar, nonce, bar, timestamp);
         String tempSignature = CryptoUtils.signWithHmacsh1(querySecret, content);
-        return tempSignature + "-" + randomNumber + "-" + timestamp;
+        return String.format("%s%s%s%s%s", tempSignature, bar, nonce, bar, timestamp);
     }
-    public static void main(String[] args){
-        System.out.println(encryptPassword("WL4odQnH","mCVmZAka","fS4EKMWTYKS1zZ84"));
+
+    public static void main(String[] args) {
+        System.out.println(encryptPassword("WL4odQnH", "mCVmZAka", "fS4EKMWTYKS1zZ84"));
     }
 }
