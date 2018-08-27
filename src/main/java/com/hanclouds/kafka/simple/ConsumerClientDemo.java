@@ -11,9 +11,9 @@ import org.apache.kafka.common.security.plain.PlainLoginModule;
 import org.apache.kafka.common.serialization.StringDeserializer;
 
 import java.time.Duration;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Properties;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * @program: kafka-client-demo
@@ -23,9 +23,8 @@ import java.util.Properties;
  **/
 public class ConsumerClientDemo {
     /**
-     *
      * @param USER_NAME == productKey
-     *        PASSWORD = EncryptUtil.encryptPassword(USER_NAME, QUERY_KEY, QUERY_SECRET)
+     * PASSWORD = EncryptUtil.encryptPassword(USER_NAME, QUERY_KEY, QUERY_SECRET)
      */
 
     private static final String USER_NAME = "vh6luFPT";
@@ -53,20 +52,32 @@ public class ConsumerClientDemo {
 
         //等同于 Configuration.setConfiguration(new SaslConfig("userName","password")); 这种配置方式
         props.put(SaslConfigs.SASL_JAAS_CONFIG, String.format(
-                PlainLoginModule.class.getName()+ " required username=\"%s\" " + "password=\"%s\";",
+                PlainLoginModule.class.getName() + " required username=\"%s\" " + "password=\"%s\";",
                 USER_NAME,
                 password
         ));
-        KafkaConsumer<String, String> consumer = new KafkaConsumer<>(props);
+        final KafkaConsumer<String, String> consumer = new KafkaConsumer<>(props);
+        final AtomicBoolean isShuttingDown = new AtomicBoolean(false);
         //需订阅的topic
         consumer.subscribe(Collections.singletonList("test"));
-        while (true) {
-            ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(100));
-            for (ConsumerRecord<String, String> record : records) {
-                System.out.printf("offset = %d, key = %s, value = %s%n", record.offset(), record.key(), record.value());
+        //添加ShutdownHook
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            isShuttingDown.set(true);
+            //consumer 非线程安全
+            synchronized (consumer){
+                consumer.close();
             }
-
+        }));
+        try {
+            while (!isShuttingDown.get()) {
+                ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(1000));
+                for (ConsumerRecord<String, String> record : records) {
+                    System.out.printf("offset = %d, key = %s, value = %s%n", record.offset(), record.key(), record.value());
+                }
+            }
+        } catch (Throwable e) {
+            System.exit(1);
         }
-
+        System.exit(0);
     }
-}
+    }

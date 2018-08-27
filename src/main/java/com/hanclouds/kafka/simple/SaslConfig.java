@@ -23,7 +23,7 @@ public class SaslConfig extends Configuration {
 
     @Override
     public AppConfigurationEntry[] getAppConfigurationEntry(String name) {
-        Map<String, String> options = new HashMap<String, String>();
+        Map<String, String> options = new HashMap<String, String>(2);
         options.put("username", userName);
         options.put("password", password);
         AppConfigurationEntry entry = new AppConfigurationEntry(
