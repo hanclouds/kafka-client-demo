@@ -33,11 +33,6 @@
             <artifactId>slf4j-simple</artifactId>
             <version>1.6.1</version>
         </dependency>
-        <dependency>
-            <groupId>com.hanclouds</groupId>
-            <artifactId>rest-common</artifactId>
-            <version>20180718.1545-RELEASE</version>
-        </dependency>
     </dependencies>
 
 </project>

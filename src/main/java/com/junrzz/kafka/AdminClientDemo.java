@@ -1,18 +1,16 @@
-package com.junrzz.kafka.simple;
+package com.junrzz.kafka;
 
+import com.hanclouds.kafka.simple.SaslConfig;
 import org.apache.kafka.clients.admin.*;
 import org.apache.kafka.common.acl.AccessControlEntry;
 import org.apache.kafka.common.acl.AclBinding;
 import org.apache.kafka.common.acl.AclOperation;
 import org.apache.kafka.common.acl.AclPermissionType;
 import org.apache.kafka.common.resource.PatternType;
-import org.apache.kafka.common.resource.Resource;
 import org.apache.kafka.common.resource.ResourcePattern;
 import org.apache.kafka.common.resource.ResourceType;
 
 import javax.security.auth.login.Configuration;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.Properties;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
@@ -45,9 +43,9 @@ public class AdminClientDemo {
 
        //授予只读权限
         AclBinding group = new AclBinding(new ResourcePattern(ResourceType.GROUP, "test-consumer-group", PatternType.LITERAL),
-              new AccessControlEntry("User:WL4odQnH", "*", AclOperation.READ, AclPermissionType.ALLOW ) );
+              new AccessControlEntry("User:vh6luFPT", "*", AclOperation.READ, AclPermissionType.ALLOW ) );
         AclBinding topic = new AclBinding(new ResourcePattern(ResourceType.TOPIC, "test", PatternType.LITERAL),
-                new AccessControlEntry("User:WL4odQnH", "*", AclOperation.READ, AclPermissionType.ALLOW ) );
+                new AccessControlEntry("User:vh6luFPT", "*", AclOperation.READ, AclPermissionType.ALLOW ) );
         CreateAclsResult createAclsResult = adminClient.createAcls(Stream.of(group,topic).collect(Collectors.toList()));
         createAclsResult.all().get();
     }

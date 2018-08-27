@@ -1,4 +1,4 @@
-package com.junrzz.kafka.simple;
+package com.hanclouds.kafka.simple;
 
 
 import javax.security.auth.login.AppConfigurationEntry;
@@ -23,10 +23,6 @@ public class SaslConfig extends Configuration {
 
     @Override
     public AppConfigurationEntry[] getAppConfigurationEntry(String name) {
-//        String appKey = "WL4odQnH";    //登陆认证用户名
-//        String secretKey = "mCVmZAka-fS4EKMWTYKS1zZ84"; //登陆认证密码
-//        String appKey = "admin";      //以admin用户登录，不进行第三方auth服务认证
-//        String secretKey = "admin";
         Map<String, String> options = new HashMap<String, String>();
         options.put("username", userName);
         options.put("password", password);
