@@ -64,7 +64,7 @@ public class ConsumerClientDemo {
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             isShuttingDown.set(true);
             //consumer 非线程安全
-            synchronized (consumer){
+            synchronized (consumer) {
                 consumer.close();
             }
         }));
@@ -80,4 +80,4 @@ public class ConsumerClientDemo {
         }
         System.exit(0);
     }
-    }
+}
