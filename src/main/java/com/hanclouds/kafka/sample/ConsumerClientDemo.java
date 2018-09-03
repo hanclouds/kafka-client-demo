@@ -1,6 +1,5 @@
-package com.hanclouds.kafka.simple;
+package com.hanclouds.kafka.sample;
 
-import com.hanclouds.kafka.simple.util.EncryptUtil;
 import org.apache.kafka.clients.CommonClientConfigs;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
@@ -18,24 +17,28 @@ import java.util.concurrent.atomic.AtomicBoolean;
 /**
  * @program: kafka-client-demo
  * @description: kafka consumer client demo
- * @author: liujj
- * @create: 2018-08-14 14:21
+ * @author: hanclouds
+ * @create: 2018-09-13
  **/
 public class ConsumerClientDemo {
     /**
      * @param USER_NAME == productKey
      * PASSWORD = EncryptUtil.encryptPassword(USER_NAME, QUERY_KEY, QUERY_SECRET)
      */
-
-    private static final String USER_NAME = "vh6luFPT";
+    private static final String PRODUCT_KEY = "vh6luFPT";
     private static final String QUERY_KEY = "vobOqKPM";
     private static final String QUERY_SECRET = "r5dsZxFdxvVxJ6qa";
+    private static final String USER_NAME = PRODUCT_KEY;
+    private static final String KAFKA_SERVERS = "192.168.1.100:9092";
+    private static final String GROUP = "group-" + PRODUCT_KEY;
+    private static final String TOPIC = PRODUCT_KEY;
+
 
 
     public static void main(String[] args) {
         Properties props = new Properties();
-        props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "192.168.1.100:9092");
-        props.put(ConsumerConfig.GROUP_ID_CONFIG, "test-consumer-group");
+        props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, KAFKA_SERVERS);
+        props.put(ConsumerConfig.GROUP_ID_CONFIG, GROUP);
         props.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, false);
         props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
         props.put(ConsumerConfig.AUTO_COMMIT_INTERVAL_MS_CONFIG, 100);
@@ -49,8 +52,6 @@ public class ConsumerClientDemo {
         props.put(SaslConfigs.SASL_MECHANISM, "PLAIN");
         //获取加密后的密码
         String password = EncryptUtil.encryptPassword(USER_NAME, QUERY_KEY, QUERY_SECRET);
-
-        //等同于 Configuration.setConfiguration(new SaslConfig("userName","password")); 这种配置方式
         props.put(SaslConfigs.SASL_JAAS_CONFIG, String.format(
                 PlainLoginModule.class.getName() + " required username=\"%s\" " + "password=\"%s\";",
                 USER_NAME,
@@ -58,8 +59,8 @@ public class ConsumerClientDemo {
         ));
         final KafkaConsumer<String, String> consumer = new KafkaConsumer<>(props);
         final AtomicBoolean isShuttingDown = new AtomicBoolean(false);
-        //需订阅的topic
-        consumer.subscribe(Collections.singletonList("test"));
+        //订阅topic
+        consumer.subscribe(Collections.singletonList(TOPIC));
         //添加ShutdownHook
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             isShuttingDown.set(true);
