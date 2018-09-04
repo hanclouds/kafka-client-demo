@@ -1,20 +1,45 @@
-package com.hanclouds.kafka.sample;
+package com.hanclouds.cloud.sample;
 
+import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.codec.binary.StringUtils;
 import sun.misc.BASE64Encoder;
 
+import javax.crypto.Cipher;
 import javax.crypto.Mac;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
+import java.security.Key;
 import java.util.UUID;
 
 /**
- * @program: kafka-client-demo
- * @description: 加密password 工具类
+ * @description: 加解密工具类
  * @author: hanclouds
  * @create: 2018-09-13
  **/
 public class EncryptUtil {
 
+    private static final String AES = "AES";
+
+    /**
+     * 解密数据
+     *
+     * @param secret        秘钥
+     * @param secretContent 密文
+     * @return  明文数据
+     */
+    public static String decrypt(String secret, String secretContent) {
+        try {
+            Key key = new SecretKeySpec(secret.getBytes(), AES);
+            Cipher c = Cipher.getInstance(AES);
+            c.init(Cipher.DECRYPT_MODE, key);
+            byte[] decodedValue = Base64.decodeBase64(secretContent);
+            byte[] decValue = c.doFinal(decodedValue);
+            return StringUtils.newStringUtf8(decValue);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return null;
+        }
+    }
 
     /**
      * 加密密码

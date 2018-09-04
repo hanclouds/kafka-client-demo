@@ -1,5 +1,6 @@
-package com.hanclouds.kafka.sample;
+package com.hanclouds.cloud.sample;
 
+import com.alibaba.fastjson.JSON;
 import org.apache.kafka.clients.CommonClientConfigs;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
@@ -25,15 +26,13 @@ public class ConsumerClientDemo {
      * @param USER_NAME == productKey
      * PASSWORD = EncryptUtil.encryptPassword(USER_NAME, QUERY_KEY, QUERY_SECRET)
      */
-    private static final String PRODUCT_KEY = "vh6luFPT";
-    private static final String QUERY_KEY = "vobOqKPM";
-    private static final String QUERY_SECRET = "r5dsZxFdxvVxJ6qa";
+    private static final String PRODUCT_KEY = "wOPt7cgT";
+    private static final String QUERY_KEY = "d6HLCE41";
+    private static final String QUERY_SECRET = "geTqIWgHaOPV8Crr";
     private static final String USER_NAME = PRODUCT_KEY;
-    private static final String KAFKA_SERVERS = "192.168.1.100:9092";
+    private static final String KAFKA_SERVERS = "172.16.20.60:9292";
     private static final String GROUP = "group-" + PRODUCT_KEY;
     private static final String TOPIC = PRODUCT_KEY;
-
-
 
     public static void main(String[] args) {
         Properties props = new Properties();
@@ -73,7 +72,10 @@ public class ConsumerClientDemo {
             while (!isShuttingDown.get()) {
                 ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(1000));
                 for (ConsumerRecord<String, String> record : records) {
-                    System.out.printf("offset = %d, key = %s, value = %s%n", record.offset(), record.key(), record.value());
+                    DeviceData deviceData = JSON.parseObject(EncryptUtil.decrypt(QUERY_SECRET, record.value()), DeviceData.class);
+                    if (deviceData != null) {
+                        System.out.printf("offset = %d, key = %s, value = %s%n", record.offset(), record.key(), deviceData.toString());
+                    }
                 }
             }
         } catch (Throwable e) {
