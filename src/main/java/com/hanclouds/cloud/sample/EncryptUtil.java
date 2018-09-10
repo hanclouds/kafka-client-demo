@@ -19,6 +19,7 @@ import java.util.UUID;
 public class EncryptUtil {
 
     private static final String AES = "AES";
+    private static final String HMACSHA1 = "HmacSHA1";
 
     /**
      * 解密数据
@@ -69,8 +70,8 @@ public class EncryptUtil {
     private static String signWithHmacsha1(String secret, String content) {
         try {
             byte[] keyBytes = secret.getBytes("utf-8");
-            SecretKey secretKey = new SecretKeySpec(keyBytes, "HmacSHA1");
-            Mac mac = Mac.getInstance("HmacSHA1");
+            SecretKey secretKey = new SecretKeySpec(keyBytes, HMACSHA1);
+            Mac mac = Mac.getInstance(HMACSHA1);
             mac.init(secretKey);
             byte[] rawHmac = mac.doFinal(content.getBytes("utf-8"));
             return (new BASE64Encoder()).encode(rawHmac);
