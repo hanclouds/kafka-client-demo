@@ -76,7 +76,7 @@ public class ConsumerClientDemo {
         props.put(SaslConfigs.SASL_MECHANISM, "PLAIN");
 
         props.put(SaslConfigs.SASL_JAAS_CONFIG, String.format(
-                PlainLoginModule.class.getName() + " required username=\"%s\" " + "PASSWORD=\"%s\";",
+                PlainLoginModule.class.getName() + " required username=\"%s\" " + "password=\"%s\";",
                 USER_NAME,
                 PASSWORD
         ));
