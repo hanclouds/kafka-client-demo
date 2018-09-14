@@ -23,15 +23,41 @@ import java.util.concurrent.atomic.AtomicBoolean;
  **/
 public class ConsumerClientDemo {
     /**
-     * @param USER_NAME == productKey
-     * PASSWORD = EncryptUtil.encryptPassword(USER_NAME, QUERY_KEY, QUERY_SECRET)
+     * 产品Key
      */
     private static final String PRODUCT_KEY = "wOPt7cgT";
+    /**
+     * 产品查询Key
+     */
     private static final String QUERY_KEY = "d6HLCE41";
+    /**
+     * 产品查询secret
+     */
     private static final String QUERY_SECRET = "geTqIWgHaOPV8Crr";
+    /**
+     * kafka认证所需的用户名
+     * USER_NAME == productKey
+     */
     private static final String USER_NAME = PRODUCT_KEY;
+    /**
+     * kafka认证所需的密码
+     */
+    private static final String PASSWORD = EncryptUtil.encryptPassword(USER_NAME, QUERY_KEY, QUERY_SECRET);
+    /**
+     * 数据加解密所需的密码
+     */
+    private static final String DATA_SECRECT = "gK7zrfjn9c1M5c4B";
+    /**
+     * kafka服务器
+     */
     private static final String KAFKA_SERVERS = "172.16.20.60:9292";
+    /**
+     * kafka group
+     */
     private static final String GROUP = "group-" + PRODUCT_KEY;
+    /**
+     * kafka topic
+     */
     private static final String TOPIC = PRODUCT_KEY;
 
     public static void main(String[] args) {
@@ -48,12 +74,11 @@ public class ConsumerClientDemo {
         //开启SASL_PLAINTEXT
         props.put(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, "SASL_PLAINTEXT");
         props.put(SaslConfigs.SASL_MECHANISM, "PLAIN");
-        //获取加密后的密码
-        String password = EncryptUtil.encryptPassword(USER_NAME, QUERY_KEY, QUERY_SECRET);
+
         props.put(SaslConfigs.SASL_JAAS_CONFIG, String.format(
-                PlainLoginModule.class.getName() + " required username=\"%s\" " + "password=\"%s\";",
+                PlainLoginModule.class.getName() + " required username=\"%s\" " + "PASSWORD=\"%s\";",
                 USER_NAME,
-                password
+                PASSWORD
         ));
         final KafkaConsumer<String, String> consumer = new KafkaConsumer<>(props);
         final AtomicBoolean isShuttingDown = new AtomicBoolean(false);
@@ -71,7 +96,7 @@ public class ConsumerClientDemo {
             while (!isShuttingDown.get()) {
                 ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(1000));
                 for (ConsumerRecord<String, String> record : records) {
-                    DeviceData deviceData = JSON.parseObject(EncryptUtil.decrypt(QUERY_SECRET, record.value()), DeviceData.class);
+                    DeviceData deviceData = JSON.parseObject(EncryptUtil.decrypt(DATA_SECRECT, record.value()), DeviceData.class);
                     if (deviceData != null) {
                         System.out.printf("offset = %d, key = %s, value = %s%n", record.offset(), record.key(), deviceData.toString());
                     }
