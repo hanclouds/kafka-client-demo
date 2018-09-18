@@ -68,10 +68,10 @@ public class ConsumerClientDemo {
         props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
         props.put(ConsumerConfig.SESSION_TIMEOUT_MS_CONFIG, 15000);
         props.put(ConsumerConfig.CLIENT_ID_CONFIG, USER_NAME);
-        //指定序列化和反序列化类，也可以自定义
+        // 指定序列化和反序列化类，也可以自定义
         props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
-        //开启SASL_PLAINTEXT
+        // 开启SASL_PLAINTEXT
         props.put(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, "SASL_PLAINTEXT");
         props.put(SaslConfigs.SASL_MECHANISM, "PLAIN");
 
@@ -81,10 +81,11 @@ public class ConsumerClientDemo {
                 PASSWORD
         ));
         final KafkaConsumer<String, String> consumer = new KafkaConsumer<>(props);
-        final AtomicBoolean isShuttingDown = new AtomicBoolean(false);
-        //订阅topic
+        // 订阅topic
         consumer.subscribe(Collections.singletonList(TOPIC));
-        //添加ShutdownHook
+
+        // 添加钩子，确保程序退出时（比如按下Ctrl+C），consumer正确关闭
+        final AtomicBoolean isShuttingDown = new AtomicBoolean(false);
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             isShuttingDown.set(true);
             //consumer 非线程安全
@@ -94,15 +95,16 @@ public class ConsumerClientDemo {
         }));
         try {
             while (!isShuttingDown.get()) {
-                ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(1000));
+                ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(100));
                 for (ConsumerRecord<String, String> record : records) {
                     DeviceData deviceData = JSON.parseObject(EncryptUtil.decrypt(DATA_SECRECT, record.value()), DeviceData.class);
                     if (deviceData != null) {
-                        System.out.printf("offset = %d, key = %s, value = %s%n", record.offset(), record.key(), deviceData.toString());
+                        System.out.printf("topic=%s, partition=%s, offset = %d, key = %s, value = %s%n",
+                                record.topic(), record.partition(),record.offset(), record.key(), deviceData.toString());
                     }
                 }
             }
-        } catch (Throwable e) {
+        } catch (Exception e) {
             System.exit(1);
         }
         System.exit(0);
