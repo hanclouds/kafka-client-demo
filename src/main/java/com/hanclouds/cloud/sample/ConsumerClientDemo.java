@@ -50,7 +50,7 @@ public class ConsumerClientDemo {
     /**
      * kafka服务器
      */
-    private static final String KAFKA_SERVERS = "172.16.20.60:9292";
+    private static final String KAFKA_SERVERS = "172.16.20.62:9292";
     /**
      * kafka group
      */
