@@ -1,14 +1,14 @@
 package com.hanclouds.cloud.sample;
 
 import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.codec.binary.StringUtils;
 import sun.misc.BASE64Encoder;
 
 import javax.crypto.Cipher;
 import javax.crypto.Mac;
 import javax.crypto.SecretKey;
+import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
-import java.security.Key;
+import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 
 /**
@@ -18,28 +18,42 @@ import java.util.UUID;
  **/
 public class EncryptUtil {
 
-    private static final String AES = "AES";
-    private static final String HMACSHA1 = "HmacSHA1";
+    private final static String AES_CBC = "AES/CBC/PKCS5Padding";
+    private final static int AES_KEY_SIZE = 16;
+    private final static String HMACSHA1 = "HmacSHA1";
+    private final static String AES = "AES";
 
     /**
      * 解密数据
      *
      * @param secret        秘钥
-     * @param secretContent 密文
+     * @param contentString 密文
      * @return  明文数据
      */
-    public static String decrypt(String secret, String secretContent) {
-        try {
-            Key key = new SecretKeySpec(secret.getBytes(), AES);
-            Cipher c = Cipher.getInstance(AES);
-            c.init(Cipher.DECRYPT_MODE, key);
-            byte[] decodedValue = Base64.decodeBase64(secretContent);
-            byte[] decValue = c.doFinal(decodedValue);
-            return StringUtils.newStringUtf8(decValue);
-        } catch (Exception ex) {
-            ex.printStackTrace();
+    public static String decodeWithAesCbc(String secret,String contentString) {
+        if (secret.length() < AES_KEY_SIZE) {
             return null;
         }
+        if (secret.length() > AES_KEY_SIZE) {
+            secret = secret.substring(0, AES_KEY_SIZE);
+        }
+        try {
+            byte[] content = Base64.decodeBase64(contentString);
+            SecretKeySpec key = new SecretKeySpec(secret.getBytes(StandardCharsets.UTF_8.name()), AES);
+            Cipher cipher = Cipher.getInstance(AES_CBC);
+            byte[] ivBytes = new byte[16];
+            System.arraycopy(content, 0, ivBytes, 0, 16);
+            IvParameterSpec iv = new IvParameterSpec(ivBytes);
+            cipher.init(Cipher.DECRYPT_MODE, key, iv);
+            byte[] encBytes = new byte[content.length - 16];
+            System.arraycopy(content, 16, encBytes, 0, encBytes.length);
+            byte[] result = cipher.doFinal(encBytes);
+            return new String(result);
+        } catch (Exception e) {
+           e.printStackTrace();
+
+        }
+        return null;
     }
 
     /**
@@ -69,11 +83,11 @@ public class EncryptUtil {
      */
     private static String signWithHmacsha1(String secret, String content) {
         try {
-            byte[] keyBytes = secret.getBytes("utf-8");
+            byte[] keyBytes = secret.getBytes(StandardCharsets.UTF_8.name());
             SecretKey secretKey = new SecretKeySpec(keyBytes, HMACSHA1);
             Mac mac = Mac.getInstance(HMACSHA1);
             mac.init(secretKey);
-            byte[] rawHmac = mac.doFinal(content.getBytes("utf-8"));
+            byte[] rawHmac = mac.doFinal(content.getBytes(StandardCharsets.UTF_8.name()));
             return (new BASE64Encoder()).encode(rawHmac);
         } catch (Exception var) {
             var.printStackTrace();

@@ -97,7 +97,7 @@ public class ConsumerClientDemo {
             while (!isShuttingDown.get()) {
                 ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(100));
                 for (ConsumerRecord<String, String> record : records) {
-                    DeviceData deviceData = JSON.parseObject(EncryptUtil.decrypt(DATA_SECRECT, record.value()), DeviceData.class);
+                    DeviceData deviceData = JSON.parseObject(EncryptUtil.decodeWithAesCbc(DATA_SECRECT, record.value()), DeviceData.class);
                     if (deviceData != null) {
                         System.out.printf("topic=%s, partition=%s, offset = %d, key = %s, value = %s%n",
                                 record.topic(), record.partition(),record.offset(), record.key(), deviceData.toString());
