@@ -1,4 +1,3 @@
-a simple demo of kafka SASL/PLAIN client
-=======
-## kafka client demo
+瀚云平台云接入服务客户端DEMO程序
+
 
