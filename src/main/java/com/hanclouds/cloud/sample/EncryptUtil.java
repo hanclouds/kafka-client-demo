@@ -70,7 +70,6 @@ public class EncryptUtil {
         long timestamp = System.currentTimeMillis();
         String content = String.format("%s%s%s%s%s%s%s", productKey, bar, queryKey, bar, nonce, bar, timestamp);
         String tempSignature = signWithHmacsha1(querySecret, content);
-        System.out.println("1:" + String.format("%s%s%s%s%s", tempSignature, bar, nonce, bar, timestamp));
         return String.format("%s%s%s%s%s", tempSignature, bar, nonce, bar, timestamp);
     }
 

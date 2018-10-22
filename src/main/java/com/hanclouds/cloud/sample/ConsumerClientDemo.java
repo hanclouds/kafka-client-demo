@@ -64,9 +64,7 @@ public class ConsumerClientDemo {
         Properties props = new Properties();
         props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, KAFKA_SERVERS);
         props.put(ConsumerConfig.GROUP_ID_CONFIG, GROUP);
-        props.put(ConsumerConfig.SESSION_TIMEOUT_MS_CONFIG, 15000);
         props.put(ConsumerConfig.CLIENT_ID_CONFIG, USER_NAME);
-        // 指定序列化和反序列化类，也可以自定义
         props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         // 开启SASL_PLAINTEXT
