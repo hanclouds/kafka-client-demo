@@ -25,15 +25,15 @@ public class ConsumerClientDemo {
     /**
      * 产品Key
      */
-    private static final String PRODUCT_KEY = "wOPt7cgT";
+    private static final String PRODUCT_KEY = "mbGW4rH5";
     /**
      * 产品查询Key
      */
-    private static final String QUERY_KEY = "d6HLCE41";
+    private static final String QUERY_KEY = "fETDECSX";
     /**
      * 产品查询secret
      */
-    private static final String QUERY_SECRET = "geTqIWgHaOPV8Crr";
+    private static final String QUERY_SECRET = "r2bDGo7CZ3opWMuM";
     /**
      * kafka认证所需的用户名
      * USER_NAME == productKey
@@ -46,11 +46,11 @@ public class ConsumerClientDemo {
     /**
      * 数据加解密所需的密码
      */
-    private static final String DATA_SECRECT = "gK7zrfjn9c1M5c4B";
+    private static final String DATA_SECRECT = "tYL4DNnlfW2aXPk8";
     /**
      * kafka服务器
      */
-    private static final String KAFKA_SERVERS = "172.16.20.62:9292";
+    private static final String KAFKA_SERVERS = "cloud-access.hanclouds.com:9292,cloud-access.hanclouds.com:9293,cloud-access.hanclouds.com:9294";
     /**
      * kafka group
      */
