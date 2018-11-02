@@ -46,7 +46,7 @@ public class ConsumerClientDemo {
     /**
      * 数据加解密所需的密码
      */
-    private static final String DATA_SECRECT = "tYL4DNnlfW2aXPk8";
+    private static final String DATA_SECRECT = "u0RIw8SfkCH6rqpM";
     /**
      * kafka服务器
      */
