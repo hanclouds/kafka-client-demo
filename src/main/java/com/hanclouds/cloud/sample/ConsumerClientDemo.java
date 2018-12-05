@@ -10,7 +10,6 @@ import org.apache.kafka.common.config.SaslConfigs;
 import org.apache.kafka.common.security.plain.PlainLoginModule;
 import org.apache.kafka.common.serialization.StringDeserializer;
 
-import java.time.Duration;
 import java.util.Collections;
 import java.util.Properties;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -25,15 +24,15 @@ public class ConsumerClientDemo {
     /**
      * 产品Key
      */
-    private static final String PRODUCT_KEY = "mbGW4rH5";
+    private static final String PRODUCT_KEY = "productKey";
     /**
      * 产品查询Key
      */
-    private static final String QUERY_KEY = "fETDECSX";
+    private static final String QUERY_KEY = "queryKey";
     /**
      * 产品查询secret
      */
-    private static final String QUERY_SECRET = "r2bDGo7CZ3opWMuM";
+    private static final String QUERY_SECRET = "querySecret";
     /**
      * kafka认证所需的用户名
      * USER_NAME == productKey
@@ -46,7 +45,7 @@ public class ConsumerClientDemo {
     /**
      * 数据加解密所需的密码
      */
-    private static final String DATA_SECRECT = "u486DcARglDnZoaw";
+    private static final String DATA_SECRET = "dataSecret";
     /**
      * kafka服务器
      */
@@ -91,9 +90,9 @@ public class ConsumerClientDemo {
         }));
         try {
             while (!isShuttingDown.get()) {
-                ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(100));
+                ConsumerRecords<String, String> records = consumer.poll(100);
                 for (ConsumerRecord<String, String> record : records) {
-                    DeviceData deviceData = JSON.parseObject(EncryptUtil.decodeWithAesCbc(DATA_SECRECT, record.value()), DeviceData.class);
+                    DeviceData deviceData = JSON.parseObject(EncryptUtil.decodeWithAesCbc(DATA_SECRET, record.value()), DeviceData.class);
                     if (deviceData != null) {
                         System.out.printf("topic=%s, partition=%s, offset = %d, key = %s, value = %s%n",
                                 record.topic(), record.partition(),record.offset(), record.key(), deviceData.toString());
