@@ -11,6 +11,7 @@ import org.apache.kafka.common.security.plain.PlainLoginModule;
 import org.apache.kafka.common.serialization.StringDeserializer;
 
 import java.time.Duration;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Properties;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -25,15 +26,15 @@ public class ConsumerClientDemo {
     /**
      * 产品Key
      */
-    private static final String PRODUCT_KEY = "mbGW4rH5";
+    private static final String PRODUCT_KEY = "suspdibl";
     /**
      * 产品查询Key
      */
-    private static final String QUERY_KEY = "fETDECSX";
+    private static final String QUERY_KEY = "M5dwhecE";
     /**
      * 产品查询secret
      */
-    private static final String QUERY_SECRET = "r2bDGo7CZ3opWMuM";
+    private static final String QUERY_SECRET = "D8dAsIGQIukhhAm3";
     /**
      * kafka认证所需的用户名
      * USER_NAME == productKey
@@ -46,7 +47,7 @@ public class ConsumerClientDemo {
     /**
      * 数据加解密所需的密码
      */
-    private static final String DATA_SECRECT = "u486DcARglDnZoaw";
+    private static final String DATA_SECRECT = "mfStHiClG28fUYlB";
     /**
      * kafka服务器
      */
@@ -56,9 +57,18 @@ public class ConsumerClientDemo {
      */
     private static final String GROUP = "group-" + PRODUCT_KEY;
     /**
-     * kafka topic
+     * 设备数据 topic
      */
-    private static final String TOPIC = PRODUCT_KEY;
+    private static final String DATA_TOPIC = PRODUCT_KEY;
+    /**
+     * 设备命令 topic
+     */
+    private static final String CMD_TOPIC = "cmd-" + PRODUCT_KEY;
+    /**
+     * 设备事件 topic
+     */
+    private static final String CONN_TOPIC = "conn-" + PRODUCT_KEY;
+
 
     public static void main(String[] args) {
         Properties props = new Properties();
@@ -77,8 +87,8 @@ public class ConsumerClientDemo {
                 PASSWORD
         ));
         final KafkaConsumer<String, String> consumer = new KafkaConsumer<>(props);
-        // 订阅topic
-        consumer.subscribe(Collections.singletonList(TOPIC));
+        // 订阅topic，这里根据开通的服务填写，如果开通了设备事件及命令则需要加入对应的topic,如果没有开通额外服务，则只需保留DATA_TOPIC即可
+        consumer.subscribe(Arrays.asList(DATA_TOPIC, CMD_TOPIC, CONN_TOPIC));
 
         // 添加钩子，确保程序退出时（比如按下Ctrl+C），consumer正确关闭
         final AtomicBoolean isShuttingDown = new AtomicBoolean(false);
@@ -93,10 +103,26 @@ public class ConsumerClientDemo {
             while (!isShuttingDown.get()) {
                 ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(100));
                 for (ConsumerRecord<String, String> record : records) {
-                    DeviceData deviceData = JSON.parseObject(EncryptUtil.decodeWithAesCbc(DATA_SECRECT, record.value()), DeviceData.class);
-                    if (deviceData != null) {
-                        System.out.printf("topic=%s, partition=%s, offset = %d, key = %s, value = %s%n",
-                                record.topic(), record.partition(),record.offset(), record.key(), deviceData.toString());
+                    if (DATA_TOPIC.equals(record.topic())) {
+                        DeviceData deviceData = JSON.parseObject(EncryptUtil.decodeWithAesCbc(DATA_SECRECT, record.value()), DeviceData.class);
+                        if (deviceData != null) {
+                            System.out.printf("topic=%s, partition=%s, offset = %d, key = %s, value = %s%n",
+                                    record.topic(), record.partition(), record.offset(), record.key(), deviceData.toString());
+                        }
+                    }
+                    if (CMD_TOPIC.equals(record.topic())) {
+                        CmdData cmdData = JSON.parseObject(EncryptUtil.decodeWithAesCbc(DATA_SECRECT, record.value()), CmdData.class);
+                        if (cmdData != null) {
+                            System.out.printf("topic=%s, partition=%s, offset = %d, key = %s, value = %s%n",
+                                    record.topic(), record.partition(), record.offset(), record.key(), cmdData.toString());
+                        }
+                    }
+                    if (CONN_TOPIC.equals(record.topic())) {
+                        ConnData connData = JSON.parseObject(EncryptUtil.decodeWithAesCbc(DATA_SECRECT, record.value()), ConnData.class);
+                        if (connData != null) {
+                            System.out.printf("topic=%s, partition=%s, offset = %d, key = %s, value = %s%n",
+                                    record.topic(), record.partition(), record.offset(), record.key(), connData.toString());
+                        }
                     }
                 }
             }
