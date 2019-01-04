@@ -46,7 +46,7 @@ public class ConsumerClientDemo {
     /**
      * 数据加解密所需的密码
      */
-    private static final String DATA_SECRECT = "mfStHiClG28fUYlB";
+    private static final String DATA_SECRET = "mfStHiClG28fUYlB";
     /**
      * kafka服务器
      */
@@ -103,21 +103,21 @@ public class ConsumerClientDemo {
                 ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(100));
                 for (ConsumerRecord<String, String> record : records) {
                     if (DATA_TOPIC.equals(record.topic())) {
-                        DeviceData deviceData = JSON.parseObject(EncryptUtil.decodeWithAesCbc(DATA_SECRECT, record.value()), DeviceData.class);
+                        DeviceData deviceData = JSON.parseObject(EncryptUtil.decodeWithAesCbc(DATA_SECRET, record.value()), DeviceData.class);
                         if (deviceData != null) {
                             System.out.printf("topic=%s, partition=%s, offset = %d, key = %s, value = %s%n",
                                     record.topic(), record.partition(), record.offset(), record.key(), deviceData.toString());
                         }
                     }
                     if (CMD_TOPIC.equals(record.topic())) {
-                        CmdData cmdData = JSON.parseObject(EncryptUtil.decodeWithAesCbc(DATA_SECRECT, record.value()), CmdData.class);
+                        CmdData cmdData = JSON.parseObject(EncryptUtil.decodeWithAesCbc(DATA_SECRET, record.value()), CmdData.class);
                         if (cmdData != null) {
                             System.out.printf("topic=%s, partition=%s, offset = %d, key = %s, value = %s%n",
                                     record.topic(), record.partition(), record.offset(), record.key(), cmdData.toString());
                         }
                     }
                     if (CONN_TOPIC.equals(record.topic())) {
-                        ConnData connData = JSON.parseObject(EncryptUtil.decodeWithAesCbc(DATA_SECRECT, record.value()), ConnData.class);
+                        ConnData connData = JSON.parseObject(EncryptUtil.decodeWithAesCbc(DATA_SECRET, record.value()), ConnData.class);
                         if (connData != null) {
                             System.out.printf("topic=%s, partition=%s, offset = %d, key = %s, value = %s%n",
                                     record.topic(), record.partition(), record.offset(), record.key(), connData.toString());
