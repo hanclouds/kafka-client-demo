@@ -7,12 +7,14 @@ import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.config.SaslConfigs;
+import org.apache.kafka.common.errors.SaslAuthenticationException;
 import org.apache.kafka.common.security.plain.PlainLoginModule;
 import org.apache.kafka.common.serialization.StringDeserializer;
 
 import java.time.Duration;
 import java.util.Arrays;
 import java.util.Properties;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -25,15 +27,15 @@ public class ConsumerClientDemo {
     /**
      * 产品Key
      */
-    private static final String PRODUCT_KEY = "suspdibl";
+    private static final String PRODUCT_KEY = "K0lB89AQ";
     /**
      * 产品查询Key
      */
-    private static final String QUERY_KEY = "M5dwhecE";
+    private static final String QUERY_KEY = "HiuI8tDo";
     /**
      * 产品查询secret
      */
-    private static final String QUERY_SECRET = "D8dAsIGQIukhhAm3";
+    private static final String QUERY_SECRET = "rjZbYTQZSCxSsmy1";
     /**
      * kafka认证所需的用户名
      * USER_NAME == productKey
@@ -46,7 +48,7 @@ public class ConsumerClientDemo {
     /**
      * 数据加解密所需的密码
      */
-    private static final String DATA_SECRET = "mfStHiClG28fUYlB";
+    private static final String DATA_SECRET = "IWeENaZsMW5tgIUR";
     /**
      * kafka服务器
      */
@@ -85,21 +87,15 @@ public class ConsumerClientDemo {
                 USER_NAME,
                 PASSWORD
         ));
+        consume(props);
+    }
+
+    private static void consume(Properties props){
         final KafkaConsumer<String, String> consumer = new KafkaConsumer<>(props);
         // 订阅topic，这里根据开通的服务填写，如果开通了设备事件及命令则需要加入对应的topic,如果没有开通额外服务，则只需保留DATA_TOPIC即可
-        consumer.subscribe(Arrays.asList(DATA_TOPIC, CMD_TOPIC, CONN_TOPIC));
-
-        // 添加钩子，确保程序退出时（比如按下Ctrl+C），consumer正确关闭
-        final AtomicBoolean isShuttingDown = new AtomicBoolean(false);
-        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-            isShuttingDown.set(true);
-            //consumer 非线程安全
-            synchronized (consumer) {
-                consumer.close();
-            }
-        }));
+        consumer.subscribe(Arrays.asList(DATA_TOPIC));
         try {
-            while (!isShuttingDown.get()) {
+            while (true) {
                 ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(100));
                 for (ConsumerRecord<String, String> record : records) {
                     if (DATA_TOPIC.equals(record.topic())) {
@@ -125,9 +121,17 @@ public class ConsumerClientDemo {
                     }
                 }
             }
-        } catch (Exception e) {
+        } catch (SaslAuthenticationException e) {
+            consumer.close();
+            try {
+                TimeUnit.SECONDS.sleep(2);
+            } catch (InterruptedException exception) {
+                exception.printStackTrace();
+            }
+            consume(props);
+        }catch (Exception e){
+            e.printStackTrace();
             System.exit(1);
         }
-        System.exit(0);
     }
 }
