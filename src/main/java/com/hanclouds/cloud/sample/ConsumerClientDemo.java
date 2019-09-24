@@ -7,7 +7,6 @@ import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.config.SaslConfigs;
-import org.apache.kafka.common.errors.SaslAuthenticationException;
 import org.apache.kafka.common.security.plain.PlainLoginModule;
 import org.apache.kafka.common.serialization.StringDeserializer;
 
@@ -15,7 +14,6 @@ import java.time.Duration;
 import java.util.Arrays;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * @program: kafka-client-demo
@@ -71,6 +69,7 @@ public class ConsumerClientDemo {
     private static final String CONN_TOPIC = "conn-" + PRODUCT_KEY;
 
 
+
     public static void main(String[] args) {
         Properties props = new Properties();
         props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, KAFKA_SERVERS);
@@ -93,45 +92,46 @@ public class ConsumerClientDemo {
     private static void consume(Properties props){
         final KafkaConsumer<String, String> consumer = new KafkaConsumer<>(props);
         // 订阅topic，这里根据开通的服务填写，如果开通了设备事件及命令则需要加入对应的topic,如果没有开通额外服务，则只需保留DATA_TOPIC即可
-        consumer.subscribe(Arrays.asList(DATA_TOPIC));
-        try {
+        consumer.subscribe(Arrays.asList(DATA_TOPIC,CMD_TOPIC,CONN_TOPIC));
             while (true) {
-                ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(100));
-                for (ConsumerRecord<String, String> record : records) {
-                    if (DATA_TOPIC.equals(record.topic())) {
-                        DeviceData deviceData = JSON.parseObject(EncryptUtil.decodeWithAesCbc(DATA_SECRET, record.value()), DeviceData.class);
-                        if (deviceData != null) {
-                            System.out.printf("topic=%s, partition=%s, offset = %d, key = %s, value = %s%n",
-                                    record.topic(), record.partition(), record.offset(), record.key(), deviceData.toString());
+                try {
+                    ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(100));
+                    for (ConsumerRecord<String, String> record : records) {
+                        if (DATA_TOPIC.equals(record.topic())) {
+                            DeviceData deviceData = JSON.parseObject(EncryptUtil.decodeWithAesCbc(DATA_SECRET, record.value()), DeviceData.class);
+                            if (deviceData != null) {
+                                System.out.printf("topic=%s, partition=%s, offset = %d, key = %s, value = %s%n",
+                                        record.topic(), record.partition(), record.offset(), record.key(), deviceData.toString());
+                            }
+                        }
+                        if (CMD_TOPIC.equals(record.topic())) {
+                            CmdData cmdData = JSON.parseObject(EncryptUtil.decodeWithAesCbc(DATA_SECRET, record.value()), CmdData.class);
+                            if (cmdData != null) {
+                                System.out.printf("topic=%s, partition=%s, offset = %d, key = %s, value = %s%n",
+                                        record.topic(), record.partition(), record.offset(), record.key(), cmdData.toString());
+                            }
+                        }
+                        if (CONN_TOPIC.equals(record.topic())) {
+                            ConnData connData = JSON.parseObject(EncryptUtil.decodeWithAesCbc(DATA_SECRET, record.value()), ConnData.class);
+                            if (connData != null) {
+                                System.out.printf("topic=%s, partition=%s, offset = %d, key = %s, value = %s%n",
+                                        record.topic(), record.partition(), record.offset(), record.key(), connData.toString());
+                            }
                         }
                     }
-                    if (CMD_TOPIC.equals(record.topic())) {
-                        CmdData cmdData = JSON.parseObject(EncryptUtil.decodeWithAesCbc(DATA_SECRET, record.value()), CmdData.class);
-                        if (cmdData != null) {
-                            System.out.printf("topic=%s, partition=%s, offset = %d, key = %s, value = %s%n",
-                                    record.topic(), record.partition(), record.offset(), record.key(), cmdData.toString());
-                        }
-                    }
-                    if (CONN_TOPIC.equals(record.topic())) {
-                        ConnData connData = JSON.parseObject(EncryptUtil.decodeWithAesCbc(DATA_SECRET, record.value()), ConnData.class);
-                        if (connData != null) {
-                            System.out.printf("topic=%s, partition=%s, offset = %d, key = %s, value = %s%n",
-                                    record.topic(), record.partition(), record.offset(), record.key(), connData.toString());
-                        }
-                    }
+                }catch (Exception e){
+                    e.printStackTrace();
+                    break;
                 }
+
             }
-        } catch (SaslAuthenticationException e) {
+            //关闭客户端休眠5秒后进行重连
             consumer.close();
             try {
-                TimeUnit.SECONDS.sleep(2);
-            } catch (InterruptedException exception) {
-                exception.printStackTrace();
+                TimeUnit.SECONDS.sleep(5);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
             consume(props);
-        }catch (Exception e){
-            e.printStackTrace();
-            System.exit(1);
         }
     }
-}
