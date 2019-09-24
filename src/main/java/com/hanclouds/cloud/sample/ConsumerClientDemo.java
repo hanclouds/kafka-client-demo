@@ -7,6 +7,7 @@ import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.config.SaslConfigs;
+import org.apache.kafka.common.errors.SaslAuthenticationException;
 import org.apache.kafka.common.security.plain.PlainLoginModule;
 import org.apache.kafka.common.serialization.StringDeserializer;
 
@@ -119,11 +120,13 @@ public class ConsumerClientDemo {
                             }
                         }
                     }
-                }catch (Exception e){
+                }catch (SaslAuthenticationException e){
                     e.printStackTrace();
                     break;
+                }catch (Exception e){
+                    e.printStackTrace();
+                    System.exit(1);
                 }
-
             }
             //关闭客户端休眠5秒后进行重连
             consumer.close();
