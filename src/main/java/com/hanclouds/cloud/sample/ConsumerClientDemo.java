@@ -120,12 +120,9 @@ public class ConsumerClientDemo {
                             }
                         }
                     }
-                }catch (SaslAuthenticationException e){
-                    e.printStackTrace();
-                    break;
                 }catch (Exception e){
                     e.printStackTrace();
-                    System.exit(1);
+                    break;
                 }
             }
             //关闭客户端休眠5秒后进行重连
