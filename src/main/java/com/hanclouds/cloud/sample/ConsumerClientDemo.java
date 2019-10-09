@@ -51,7 +51,7 @@ public class ConsumerClientDemo {
     /**
      * kafka服务器
      */
-    private static final String KAFKA_SERVERS = "172.16.20.62:9292";
+    private static final String KAFKA_SERVERS = "cloud-access.hanclouds.com:9292,cloud-access.hanclouds.com:9293,cloud-access.hanclouds.com:9294";
     /**
      * kafka group
      */
