@@ -26,15 +26,15 @@ public class ConsumerClientDemo {
     /**
      * 产品Key
      */
-    private static final String PRODUCT_KEY = "K0lB89AQ";
+    private static final String PRODUCT_KEY = "P5s3hTZL";
     /**
      * 产品查询Key
      */
-    private static final String QUERY_KEY = "HiuI8tDo";
+    private static final String QUERY_KEY = "IWmEi0Oj";
     /**
      * 产品查询secret
      */
-    private static final String QUERY_SECRET = "rjZbYTQZSCxSsmy1";
+    private static final String QUERY_SECRET = "sHgFmRIVvhORFp8x";
     /**
      * kafka认证所需的用户名
      * USER_NAME == productKey
@@ -47,11 +47,11 @@ public class ConsumerClientDemo {
     /**
      * 数据加解密所需的密码
      */
-    private static final String DATA_SECRET = "IWeENaZsMW5tgIUR";
+    private static final String DATA_SECRET = "gTDJB7CtNzg43bKR";
     /**
      * kafka服务器
      */
-    private static final String KAFKA_SERVERS = "cloud-access.hanclouds.com:9292,cloud-access.hanclouds.com:9293,cloud-access.hanclouds.com:9294";
+    private static final String KAFKA_SERVERS = "172.16.20.62:9292";
     /**
      * kafka group
      */
@@ -84,7 +84,7 @@ public class ConsumerClientDemo {
 
         props.put(SaslConfigs.SASL_JAAS_CONFIG, String.format(
                 PlainLoginModule.class.getName() + " required username=\"%s\" " + "password=\"%s\";",
-                USER_NAME,
+                PRODUCT_KEY,
                 PASSWORD
         ));
         consume(props);
