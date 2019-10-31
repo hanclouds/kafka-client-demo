@@ -10,7 +10,7 @@ public class DeviceData {
     /**
      * userKey
      */
-    private String userkey;
+    private String userKey;
     /**
      * productKey
      */
@@ -47,12 +47,12 @@ public class DeviceData {
     private Object data;
 
 
-    public String getUserkey() {
-        return userkey;
+    public String getUserKey() {
+        return userKey;
     }
 
-    public void setUserkey(String userkey) {
-        this.userkey = userkey;
+    public void setUserKey(String userKey) {
+        this.userKey = userKey;
     }
 
     public String getProductKey() {
@@ -106,7 +106,7 @@ public class DeviceData {
     @Override
     public String toString() {
         return "DeviceData{" +
-                "userkey='" + userkey + '\'' +
+                "userKey='" + userKey + '\'' +
                 ", productKey='" + productKey + '\'' +
                 ", deviceKey='" + deviceKey + '\'' +
                 ", time=" + time +
