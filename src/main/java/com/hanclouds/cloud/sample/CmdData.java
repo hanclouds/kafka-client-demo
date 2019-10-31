@@ -1,7 +1,8 @@
 package com.hanclouds.cloud.sample;
 
+
 /**
- * 云接入返回给用户的设备命令
+ * 推送服务返回给用户的设备命令
  *
  * @author hanclouds
  * @date 2018/9/3
@@ -20,42 +21,44 @@ public class CmdData {
      */
     private String deviceKey;
     /**
-     * 命令Id，每个命令都有一个独一无二的命令Id
-     */
-    private String cmdId;
-    /**
-     * 命令的状态，具体编码参见 CommandStateEnum
-     */
-    private int state;
-    /**
      * 命令状态发生的时间
      */
     private long time;
-    /**
-     * 命令到期时间
-     */
-    private long timeDue;
 
     /**
-     * 数据类型
+     * 命令的有效截止时间
      */
-    private int type;
+    private long timeExpire;
+
     /**
-     * 数据值，视类型不同，形式有所不同
-     * <p>
-     * json: 对象{...}
-     * <p>
-     * int: 整数
-     * <p>
-     * double: 浮点数
-     * <p>
-     * string: 字符串
-     * <p>
-     * bin: 二进制字节数组的Base64编码后的字符串
+     * 命令Id，每个命令都有一个独一无二的命令Id
      */
-    private Object data;
+    private String cmdId;
 
+    /**
+     * 命令标识符
+     */
+    private String identifier;
 
+    /**
+     * 命令的状态，具体编码参见 {@link }
+     */
+    private int state;
+
+    /**
+     * 输入数据类型
+     */
+    private int inputType;
+
+    /**
+     * 输入数据
+     */
+    private Object input;
+
+    /**
+     * 输出数据
+     */
+    private String output;
 
     public String getUserKey() {
         return userKey;
@@ -81,12 +84,36 @@ public class CmdData {
         this.deviceKey = deviceKey;
     }
 
+    public long getTime() {
+        return time;
+    }
+
+    public void setTime(long time) {
+        this.time = time;
+    }
+
+    public long getTimeExpire() {
+        return timeExpire;
+    }
+
+    public void setTimeExpire(long timeExpire) {
+        this.timeExpire = timeExpire;
+    }
+
     public String getCmdId() {
         return cmdId;
     }
 
     public void setCmdId(String cmdId) {
         this.cmdId = cmdId;
+    }
+
+    public String getIdentifier() {
+        return identifier;
+    }
+
+    public void setIdentifier(String identifier) {
+        this.identifier = identifier;
     }
 
     public int getState() {
@@ -97,36 +124,28 @@ public class CmdData {
         this.state = state;
     }
 
-    public long getTime() {
-        return time;
+    public int getInputType() {
+        return inputType;
     }
 
-    public void setTime(long time) {
-        this.time = time;
+    public void setInputType(int inputType) {
+        this.inputType = inputType;
     }
 
-    public long getTimeDue() {
-        return timeDue;
+    public Object getInput() {
+        return input;
     }
 
-    public void setTimeDue(long timeDue) {
-        this.timeDue = timeDue;
+    public void setInput(Object input) {
+        this.input = input;
     }
 
-    public int getType() {
-        return type;
+    public String getOutput() {
+        return output;
     }
 
-    public void setType(int type) {
-        this.type = type;
-    }
-
-    public Object getData() {
-        return data;
-    }
-
-    public void setData(Object data) {
-        this.data = data;
+    public void setOutput(String output) {
+        this.output = output;
     }
 
     @Override
@@ -135,12 +154,14 @@ public class CmdData {
                 "userKey='" + userKey + '\'' +
                 ", productKey='" + productKey + '\'' +
                 ", deviceKey='" + deviceKey + '\'' +
-                ", cmdId='" + cmdId + '\'' +
-                ", state=" + state +
                 ", time=" + time +
-                ", timeDue=" + timeDue +
-                ", type=" + type +
-                ", data=" + data +
+                ", timeExpire=" + timeExpire +
+                ", cmdId='" + cmdId + '\'' +
+                ", identifier='" + identifier + '\'' +
+                ", state=" + state +
+                ", inputType=" + inputType +
+                ", input=" + input +
+                ", output='" + output + '\'' +
                 '}';
     }
 }

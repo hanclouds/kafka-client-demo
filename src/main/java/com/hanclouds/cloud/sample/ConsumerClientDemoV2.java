@@ -16,10 +16,9 @@ import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
 /**
- * @program: kafka-client-demo
- * @description:
- * @author: liujj
- * @create: 2019-09-29 15:40
+ * 推送服务消费数据所用客户端
+ * @author: hanclouds
+ * @create: 2019-09-29
  **/
 public class ConsumerClientDemoV2 {
     /**
@@ -46,7 +45,7 @@ public class ConsumerClientDemoV2 {
     /**
      * 数据加解密所需的密码
      */
-    private static final String DATA_SECRET = "RRGGVjjado83o9P2";
+    private static final String DATA_SECRET = "rjPUDYGF2oHlv7kW";
     /**
      * kafka服务器
      */
@@ -91,20 +90,10 @@ public class ConsumerClientDemoV2 {
                 for (ConsumerRecord<String, String> record : records) {
                          PushServiceData accessData = JSON.parseObject(EncryptUtil.decodeWithAesCbc(DATA_SECRET, record.value()), PushServiceData.class);
                          if (accessData != null){
-                             if (accessData.getDataType().equals(PushServiceDataTypeEnum.DEVICE_DATA.intValue())){
-                                 DeviceData deviceData = JSON.parseObject(accessData.getData(),DeviceData.class);
+                            Object data = PushServiceDataTypeEnum.getJsonDataByType(accessData.getDataType(), accessData.getData());
+                             if (data != null){
                                  System.out.printf("topic=%s, partition=%s, offset = %d, key = %s, value = %s%n",
-                                         record.topic(), record.partition(), record.offset(), record.key(), deviceData.toString());
-                             }
-                             if (accessData.getDataType().equals(PushServiceDataTypeEnum.DEVICE_CONN.intValue())){
-                                 ConnData connData = JSON.parseObject(accessData.getData(),ConnData.class);
-                                 System.out.printf("topic=%s, partition=%s, offset = %d, key = %s, value = %s%n",
-                                         record.topic(), record.partition(), record.offset(), record.key(), connData.toString());
-                             }
-                             if (accessData.getDataType().equals(PushServiceDataTypeEnum.DEVICE_CMD.intValue())){
-                                 CmdData cmdData = JSON.parseObject(accessData.getData(),CmdData.class);
-                                 System.out.printf("topic=%s, partition=%s, offset = %d, key = %s, value = %s%n",
-                                         record.topic(), record.partition(), record.offset(), record.key(), cmdData.toString());
+                                         record.topic(), record.partition(), record.offset(), record.key(), data.toString());
                              }
                          }
 

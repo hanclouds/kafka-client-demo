@@ -7,7 +7,6 @@ import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.config.SaslConfigs;
-import org.apache.kafka.common.errors.SaslAuthenticationException;
 import org.apache.kafka.common.security.plain.PlainLoginModule;
 import org.apache.kafka.common.serialization.StringDeserializer;
 
@@ -17,8 +16,7 @@ import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
 /**
- * @program: kafka-client-demo
- * @description: kafka consumer client demo
+ * 老版本云接入消费数据所用客户端
  * @author: hanclouds
  * @create: 2018-09-13
  **/
@@ -47,7 +45,7 @@ public class ConsumerClientDemo {
     /**
      * 数据加解密所需的密码
      */
-    private static final String DATA_SECRET = "gTDJB7CtNzg43bKR";
+    private static final String DATA_SECRET = "rPoTDwF72pyDvJOX";
     /**
      * kafka服务器
      */

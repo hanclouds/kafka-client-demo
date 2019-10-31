@@ -8,14 +8,14 @@ package com.hanclouds.cloud.sample;
  * @date 2018/9/3
  */
 public class PushServiceData {
-    private Integer dataType;
+    private int dataType;
     private String data;
 
-    public Integer getDataType() {
+    public int getDataType() {
         return dataType;
     }
 
-    public void setDataType(Integer dataType) {
+    public void setDataType(int dataType) {
         this.dataType = dataType;
     }
 

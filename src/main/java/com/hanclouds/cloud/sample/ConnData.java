@@ -1,7 +1,7 @@
 package com.hanclouds.cloud.sample;
 
 /**
- * 云接入返回给用户的设备事件
+ * 推送服务返回给用户的设备日志
  *
  * @author hanclouds
  * @date 2018/9/3
