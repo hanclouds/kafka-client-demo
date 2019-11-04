@@ -5,7 +5,7 @@ package com.hanclouds.cloud.sample;
  * 推送服务新版数据格式
  *
  * @author hanclouds
- * @date 2018/9/3
+ * @date 2019/9/29
  */
 public class PushServiceData {
     private int dataType;
